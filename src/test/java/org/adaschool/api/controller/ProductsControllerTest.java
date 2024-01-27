@@ -1,5 +1,6 @@
 package org.adaschool.api.controller;
 
+import org.adaschool.api.SpringBootJavaAssignmentsApplication;
 import org.adaschool.api.controller.product.ProductsController;
 import org.adaschool.api.exception.ProductNotFoundException;
 import org.adaschool.api.repository.product.Product;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@SpringBootTest
+@SpringBootTest(classes = SpringBootJavaAssignmentsApplication.class)
 public class ProductsControllerTest {
     final String BASE_URL = "/v1/products/";
     @MockBean

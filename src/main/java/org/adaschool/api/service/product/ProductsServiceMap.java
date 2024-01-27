@@ -2,34 +2,44 @@ package org.adaschool.api.service.product;
 
 import org.adaschool.api.repository.product.Product;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductsServiceMap implements ProductsService {
-    @Override
+
+    private final Map<String, Product> productMap = new HashMap<>();
+
+    @PostMapping
     public Product save(Product product) {
-        return null;
+        String idProduct = product.getId();
+        productMap.put(idProduct,product);
+        return product;
     }
 
     @Override
     public Optional<Product> findById(String id) {
-        return Optional.empty();
+        return Optional.ofNullable(productMap.get(id));
     }
 
     @Override
     public List<Product> all() {
-        return null;
-    }
+        return productMap.values().stream().collect(Collectors.toList());    }
 
     @Override
     public void deleteById(String id) {
-
+        productMap.remove(id);
     }
 
     @Override
     public Product update(Product product, String productId) {
-        return null;
+        if(productMap.containsKey(product.getId())){
+            productMap.put(productId, product);
+            return  product;
+        }else {
+            return null;
+        }
     }
 }

@@ -7,4 +7,5 @@ public class ProductNotFoundException extends ResponseStatusException {
     public ProductNotFoundException(String id) {
         super(HttpStatus.NOT_FOUND, "product with ID: " + id + " not found");
     }
+
 }
