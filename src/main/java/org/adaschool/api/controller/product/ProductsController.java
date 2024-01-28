@@ -1,5 +1,6 @@
 package org.adaschool.api.controller.product;
 
+import org.adaschool.api.exception.ProductNotFoundException;
 import org.adaschool.api.repository.product.Product;
 import org.adaschool.api.service.product.ProductsService;
 import org.adaschool.api.service.product.ProductsServiceMap;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/products/")
@@ -37,7 +39,8 @@ public class ProductsController {
     public ResponseEntity<Product> findById(@PathVariable("id") String id) {
         return productsService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() ->
+        new ProductNotFoundException(id));
     }
 
     @PutMapping("{id}")
@@ -46,13 +49,19 @@ public class ProductsController {
         if (updatedProduct != null) {
             return ResponseEntity.ok(updatedProduct);
         } else {
-            return ResponseEntity.notFound().build();
+            throw new ProductNotFoundException(id);
         }
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
+        Optional<Product> existingProduct = productsService.findById(id);
+
+        if (existingProduct.isEmpty()) {
+            throw new ProductNotFoundException(id);
+        }
+
         productsService.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

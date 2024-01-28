@@ -4,12 +4,12 @@ import java.util.List;
 
 public class ProductDto {
 
+    private final String name;
     private final String description;
     private final String category;
     private final List<String> tags;
     private final double price;
     private final String imageUrl;
-    private final String name;
 
     public ProductDto() {
         this.name = "";

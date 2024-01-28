@@ -21,6 +21,11 @@ public class User {
         this.passwordHash = new BCryptPasswordEncoder().encode(password);
         this.createdAt = new Date();
     }
+    public User() {
+        this.id = null;
+        this.createdAt = new Date();
+    }
+
 
     public User(UserDto userDto) {
         this.id = null;

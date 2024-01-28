@@ -98,7 +98,7 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    public void update(ProductDto productDto) {
+    public void updateFromDto(ProductDto productDto) {
         this.name = productDto.getName();
         this.description = productDto.getDescription();
         this.category = productDto.getCategory();

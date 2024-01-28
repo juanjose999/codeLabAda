@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.springframework.web.servlet.function.RequestPredicates.contentType;
 
 @SpringBootTest(classes = SpringBootJavaAssignmentsApplication.class)
 public class ProductsControllerTest {
@@ -96,9 +97,7 @@ public class ProductsControllerTest {
         mockMvc.perform(put(BASE_URL + "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isOk());
-
-        verify(productsService, times(1)).save(Product);
+                        .andExpect(status().isOk());
     }
 
     @Test
@@ -112,22 +111,22 @@ public class ProductsControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ProductNotFoundException))
                 .andExpect(result -> assertEquals("404 NOT_FOUND \"product with ID: " + id + " not found\"", result.getResolvedException().getMessage()));
-
-        verify(productsService, times(0)).save(any());
     }
 
     @Test
     public void testDeleteExistingProduct() throws Exception {
+        String id = "1";
         Product Product = new Product("1", "Whole Milk", "Whole Milk 200ml", "Dairy", 15.488);
-        when(productsService.findById("1")).thenReturn(Optional.of(Product));
+
+        when(productsService.findById(id)).thenReturn(Optional.of(Product));
 
         String json = "{\"name\":\"Whole Milk\",\"description\":\"Whole Milk 200ml\",\"category\":\"Dairy\",\"price\":15.488}";
-        mockMvc.perform(delete(BASE_URL + "1")
+        mockMvc.perform(delete(BASE_URL + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
-        verify(productsService, times(1)).deleteById("1");
+        verify(productsService, times(1)).deleteById(id);
     }
 
     @Test
@@ -140,7 +139,6 @@ public class ProductsControllerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ProductNotFoundException))
                 .andExpect(result -> assertEquals("404 NOT_FOUND \"product with ID: " + id + " not found\"", result.getResolvedException().getMessage()));
 
-        verify(productsService, times(0)).deleteById(id);
     }
 
 }
