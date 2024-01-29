@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.adaschool.api.repository.user.UserDto;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
@@ -46,23 +47,22 @@ public class UsersController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") String id, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable("id") String id, @RequestBody UserDto userDto) {
         try {
-            User updatedUser = usersService.update(user, id);
-            if (updatedUser != null) {
-                return ResponseEntity.ok(updatedUser);
+            Optional<User> optionalUser = usersService.findById(id);
+            if (optionalUser.isPresent()) {
+                User existingUser = optionalUser.get();
+                existingUser.setName(userDto.getName());
+                existingUser.setLastName(userDto.getLastName());
+                usersService.save(existingUser);  // Guardar el usuario actualizado
+                return ResponseEntity.ok(existingUser);
             } else {
-                // User with the specified ID was not found
                 throw new UserNotFoundException(id);
             }
         } catch (UserNotFoundException e) {
-            // Log the exception for debugging purposes
-            e.printStackTrace();
-            throw e; // Re-throw UserNotFoundException
+            throw e;
         } catch (Exception e) {
-            // Log the exception for debugging purposes
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
+            throw new UserNotFoundException(id);
         }
     }
 
@@ -71,9 +71,8 @@ public class UsersController {
         Optional<User> optionalUser = usersService.findById(id);
 
         if (optionalUser.isEmpty()) {
-            // User not found, return 404 status
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("user with ID: " + id + " not found");
+            // User not found, throw a UserNotFoundException
+            throw new UserNotFoundException(id);
         }
 
         // User found, delete and return 200 status
