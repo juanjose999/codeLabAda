@@ -2,6 +2,7 @@ package org.adaschool.api.service.user;
 
 import org.adaschool.api.exception.UserNotFoundException;
 import org.adaschool.api.repository.user.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -36,28 +37,35 @@ public class UsersServiceMap implements UsersService {
 
     @Override
     public void deleteById(String id) {
-        System.out.println("Deleting user with ID: " + id);
-        if(!userMap.containsKey(id)){
-            System.out.println("User not found. Throwing UserNotFoundException");
+        if (!userMap.containsKey(id)) {
             throw new UserNotFoundException(id);
         }
-        System.out.println("User found. Removing from userMap");
         userMap.remove(id);
     }
 
     @Override
     public User update(User user, String userId) {
-        if(userMap.containsKey(userId)){
-            User userExisting = userMap.get(userId);
-            userExisting.setName(user.getName());
-            userExisting.setLastName(user.getLastName());
-            userExisting.setEmail(user.getEmail());
-
-            userMap.put(userId, userExisting);
-
-            return userExisting;
-        }else {
-            throw new UserNotFoundException("user with ID: " + userId + " not found");
+        if (!userMap.containsKey(userId)) {
+            // Usuario no encontrado, lanzar excepción o manejar según sea necesario
+            throw new UserNotFoundException("User with ID " + userId + " not found");
         }
+
+        User existingUser = userMap.get(userId);
+
+        // Actualizar campos
+        existingUser.setName(user.getName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setEmail(user.getEmail());
+
+        // Actualizar contraseña si ha cambiado
+        if (user.getPassword() != null && !user.getPassword().isEmpty() && !user.getPassword().equals(existingUser.getPassword())) {
+            // Codificar la nueva contraseña
+            existingUser.setPasswordHash(new BCryptPasswordEncoder().encode(user.getPassword()));
+        }
+
+        // Actualizar el usuario en el mapa
+        userMap.put(userId, existingUser);
+
+        return existingUser;
     }
 }

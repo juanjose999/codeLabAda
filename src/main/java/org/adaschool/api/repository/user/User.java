@@ -72,13 +72,8 @@ public class User {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
-
-    public void update(UserDto userDto) {
-        this.name = userDto.getName();
-        this.lastName = userDto.getLastName();
-        this.email = userDto.getEmail();
-        if (!userDto.getPassword().isEmpty()) {
-            this.passwordHash = new BCryptPasswordEncoder().encode(userDto.getPassword());
-        }
+    public String getPassword() {
+        return passwordHash;
     }
+
 }

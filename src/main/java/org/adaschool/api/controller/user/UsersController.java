@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/users/")
@@ -40,29 +41,43 @@ public class UsersController {
     @GetMapping("{id}")
     public ResponseEntity<?> findById(@PathVariable String id) {
         User user = usersService.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("user with ID: " + id + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(id));
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<User> updateUser(@PathVariable("id") String id, @RequestBody User user) {
-        User updateUser = usersService.update(user, id);
-        if(updateUser != null){
-            return ResponseEntity.ok(updateUser);
-        }else {
-            throw new UserNotFoundException(id);
+        try {
+            User updatedUser = usersService.update(user, id);
+            if (updatedUser != null) {
+                return ResponseEntity.ok(updatedUser);
+            } else {
+                // User with the specified ID was not found
+                throw new UserNotFoundException(id);
+            }
+        } catch (UserNotFoundException e) {
+            // Log the exception for debugging purposes
+            e.printStackTrace();
+            throw e; // Re-throw UserNotFoundException
+        } catch (Exception e) {
+            // Log the exception for debugging purposes
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e);
         }
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id) {
-        try {
-            usersService.deleteById(id);
-            System.out.println("User deleted successfully");
-            return ResponseEntity.ok().build();
-        } catch (UserNotFoundException e) {
-            System.out.println("User not found");
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<String> deleteUser(@PathVariable("id") String id) {
+        Optional<User> optionalUser = usersService.findById(id);
+
+        if (optionalUser.isEmpty()) {
+            // User not found, return 404 status
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("user with ID: " + id + " not found");
         }
+
+        // User found, delete and return 200 status
+        usersService.deleteById(id);
+        return ResponseEntity.ok("User deleted successfully");
     }
 }
