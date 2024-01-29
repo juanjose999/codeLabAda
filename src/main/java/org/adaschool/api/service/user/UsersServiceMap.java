@@ -57,7 +57,7 @@ public class UsersServiceMap implements UsersService {
 
             return userExisting;
         }else {
-            throw new UserNotFoundException("producto no encontrado");
+            throw new UserNotFoundException("user with ID: " + userId + " not found");
         }
     }
 }

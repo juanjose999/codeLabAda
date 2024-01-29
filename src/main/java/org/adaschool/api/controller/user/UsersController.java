@@ -38,7 +38,7 @@ public class UsersController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<User> findById(@PathVariable String id) {
+    public ResponseEntity<?> findById(@PathVariable String id) {
         User user = usersService.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("user with ID: " + id + " not found"));
         return ResponseEntity.ok(user);
