@@ -45,18 +45,24 @@ public class ProductsServiceMap implements ProductsService {
         if (productMap.containsKey(productId)) {
             // Obtener el producto existente
             Product existingProduct = productMap.get(productId);
-            // Actualizar cada atributo del producto con los valores proporcionados
-            existingProduct.setName(product.getName());
-            existingProduct.setDescription(product.getDescription());
-            existingProduct.setCategory(product.getCategory());
-            existingProduct.setTags(product.getTags());
-            existingProduct.setPrice(product.getPrice());
-            existingProduct.setImageUrl(product.getImageUrl());
+            if (existingProduct != null) {
+                // Actualizar cada atributo del producto con los valores proporcionados
+                existingProduct.setName(product.getName());
+                existingProduct.setDescription(product.getDescription());
+                existingProduct.setCategory(product.getCategory());
+                existingProduct.setTags(product.getTags());
+                existingProduct.setPrice(product.getPrice());
+                existingProduct.setImageUrl(product.getImageUrl());
 
-            // Update the product in the map
-            productMap.put(productId, existingProduct);
+                // Update the product in the map
+                productMap.put(productId, existingProduct);
 
-            return existingProduct;
-        } else { throw new ProductNotFoundException("Producto no encontrado con id: " + productId); }
+                return existingProduct;
+            } else {
+                throw new ProductNotFoundException("Producto no encontrado con id: " + productId);
+            }
+        } else {
+            throw new ProductNotFoundException("Producto no encontrado con id: " + productId);
+        }
     }
 }

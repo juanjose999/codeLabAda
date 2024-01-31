@@ -43,8 +43,8 @@ public class ProductsController {
         new ProductNotFoundException(id));
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable("id") String id, @RequestBody Product product) {
+    @PutMapping("{id:\\d+}")
+    public ResponseEntity<?> updateProduct(@PathVariable("id") String id, @RequestBody Product product) {
         Product updatedProduct = productsService.update(product, id);
         if (updatedProduct != null) {
             return ResponseEntity.ok(updatedProduct);

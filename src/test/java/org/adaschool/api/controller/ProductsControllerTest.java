@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
 
@@ -90,7 +91,16 @@ public class ProductsControllerTest {
 
     @Test
     public void testUpdateExistingProduct() throws Exception {
+       /* Product Product = new Product("1", "Whole Milk", "Whole Milk 200ml", "Dairy", 15.488);
+        when(productsService.findById("1")).thenReturn(Optional.of(Product));
 
+        String json = "{\"name\":\"Whole Milk\",\"description\":\"Whole Milk 200ml\",\"category\":\"Dairy\",\"price\":15.488}";
+        mockMvc.perform(put(BASE_URL + "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+
+        verify(productsService, times(1)).save(Product);*/
     }
 
     @Test
@@ -104,6 +114,7 @@ public class ProductsControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ProductNotFoundException))
                 .andExpect(result -> assertEquals("404 NOT_FOUND \"product with ID: " + id + " not found\"", result.getResolvedException().getMessage()));
+
     }
 
     @Test
