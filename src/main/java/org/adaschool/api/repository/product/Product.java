@@ -99,11 +99,23 @@ public class Product {
     }
 
     public void updateFromDto(ProductDto productDto) {
-        this.name = productDto.getName();
-        this.description = productDto.getDescription();
-        this.category = productDto.getCategory();
-        this.tags = productDto.getTags();
-        this.price = productDto.getPrice();
-        this.imageUrl = productDto.getImageUrl();
+        if (productDto.getName() != null) {
+            this.name = productDto.getName();
+        }
+        if (productDto.getDescription() != null) {
+            this.description = productDto.getDescription();
+        }
+        if (productDto.getCategory() != null) {
+            this.category = productDto.getCategory();
+        }
+        if (productDto.getTags() != null) {
+            this.tags = productDto.getTags();
+        }
+        if (productDto.getPrice() != 0.0) {
+            this.price = productDto.getPrice();
+        }
+        if (productDto.getImageUrl() != null) {
+            this.imageUrl = productDto.getImageUrl();
+        }
     }
 }
